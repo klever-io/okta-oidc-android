@@ -46,7 +46,7 @@ public class AuthenticationResultHandler {
     @VisibleForTesting
     public ResultType mCachedResultType;
 
-    private static AuthenticationResultHandler sHandler = new AuthenticationResultHandler();
+    private static final AuthenticationResultHandler sHandler = new AuthenticationResultHandler();
 
     private AuthenticationResultHandler() {
     }
@@ -132,9 +132,9 @@ public class AuthenticationResultHandler {
 
     public static class StateResult {
 
-        private AuthorizationException exception;
-        private WebResponse authorizationResponse;
-        private Status status;
+        private final AuthorizationException exception;
+        private final WebResponse authorizationResponse;
+        private final Status status;
 
         public static StateResult canceled() {
             return new StateResult(null, null, Status.CANCELED);

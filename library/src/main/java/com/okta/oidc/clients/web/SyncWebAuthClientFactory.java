@@ -27,8 +27,8 @@ import com.okta.oidc.storage.OktaStorage;
 import com.okta.oidc.storage.security.EncryptionManager;
 
 public class SyncWebAuthClientFactory implements ClientFactory<SyncWebAuthClient> {
-    private CustomTabOptions mCustomTabOptions;
-    private String[] mSupportedBrowsers;
+    private final CustomTabOptions mCustomTabOptions;
+    private final String[] mSupportedBrowsers;
 
     public SyncWebAuthClientFactory(CustomTabOptions customTabOptions,
                                     @Nullable String... supportedBrowsers) {

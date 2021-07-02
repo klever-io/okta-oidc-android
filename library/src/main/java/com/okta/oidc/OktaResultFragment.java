@@ -19,9 +19,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.RestrictTo;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 
 import com.okta.oidc.net.request.web.WebRequest;
 
@@ -36,6 +39,24 @@ public class OktaResultFragment extends Fragment {
     public static final int REQUEST_CODE_SIGN_OUT = 200;
     private Intent authIntent;
     private Intent logoutIntent;
+
+    ActivityResultLauncher<Intent> startResultSignIn = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                Intent data = result.getData();
+
+                universalResolveResults(REQUEST_CODE_SIGN_IN, result.getResultCode(), data);
+            }
+    );
+
+    ActivityResultLauncher<Intent> startResultSignOut = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                Intent data = result.getData();
+
+                universalResolveResults(REQUEST_CODE_SIGN_OUT, result.getResultCode(), data);
+            }
+    );
 
     public static void addLoginFragment(WebRequest request,
                                         CustomTabOptions customTabOptions,
@@ -67,14 +88,26 @@ public class OktaResultFragment extends Fragment {
     @Override
     public void onResume() {
         if (authIntent != null) {
-            startActivityForResult(authIntent, REQUEST_CODE_SIGN_IN);
+            startResultSignIn.launch(authIntent);
             authIntent = null;
         }
+
         if (logoutIntent != null) {
-            startActivityForResult(logoutIntent, REQUEST_CODE_SIGN_OUT);
+            startResultSignOut.launch(logoutIntent);
             logoutIntent = null;
         }
+
         super.onResume();
+    }
+
+    private void universalResolveResults(Integer requestCode, Integer resultCode, Intent data) {
+        if (requestCode == REQUEST_CODE_SIGN_IN || requestCode == REQUEST_CODE_SIGN_OUT) {
+            FragmentActivity currentActivity = requireActivity();
+            FragmentManager fm = currentActivity.getSupportFragmentManager();
+            fm.beginTransaction().remove(this).commit();
+
+            AuthenticationResultHandler.handler().onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     @Override
@@ -101,15 +134,5 @@ public class OktaResultFragment extends Fragment {
         intent.putExtra(OktaAuthenticationActivity.EXTRA_TAB_OPTIONS, customTabOptions);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         return intent;
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_CODE_SIGN_IN || requestCode == REQUEST_CODE_SIGN_OUT) {
-            getActivity().getSupportFragmentManager().beginTransaction().remove(this).commitNow();
-            AuthenticationResultHandler.handler().onActivityResult(requestCode, resultCode, data);
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
     }
 }

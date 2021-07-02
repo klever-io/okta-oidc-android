@@ -44,10 +44,10 @@ import java.util.concurrent.Future;
 
 class WebAuthClientImpl implements WebAuthClient {
     private WeakReference<Activity> mActivity;
-    private RequestDispatcher mDispatcher;
+    private final RequestDispatcher mDispatcher;
     private ResultCallback<AuthorizationStatus, AuthorizationException> mResultCb;
-    private SyncWebAuthClient mSyncAuthClient;
-    private SessionClient mSessionImpl;
+    private final SyncWebAuthClient mSyncAuthClient;
+    private final SessionClient mSessionImpl;
     private volatile Future<?> mFutureTask;
     private String mLoginHint;
 
