@@ -14,7 +14,7 @@
         <activity
             android:name="com.okta.oidc.OktaAuthenticationActivity"
             android:exported="false"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTop"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:autoRemoveFromRecents="true"
             tools:targetApi="lollipop" />
@@ -22,7 +22,7 @@
         <activity
             android:name="com.okta.oidc.OktaRedirectActivity"
             android:exported="true"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTop"
             android:autoRemoveFromRecents="true"
             tools:targetApi="lollipop">
             <intent-filter>
