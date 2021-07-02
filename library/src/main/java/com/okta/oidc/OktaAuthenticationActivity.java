@@ -42,7 +42,6 @@ import static com.okta.oidc.net.ConnectionParameters.X_OKTA_USER_AGENT;
  * @see "Implementing the Authorization Code with PKCE flow <https://developer.okta.com/authentication-guide/implementing-authentication/auth-code-pkce/>"
  */
 public class OktaAuthenticationActivity extends Activity {
-    private static final String TAG = OktaAuthenticationActivity.class.getSimpleName();
     /**
      * The Extra auth started.
      */
@@ -63,14 +62,11 @@ public class OktaAuthenticationActivity extends Activity {
      * The Extra browsers.
      */
     static final String EXTRA_BROWSERS = "com.okta.auth.BROWSERS";
-    private static final String CHROME_STABLE = "com.android.chrome";
-    private static final String CHROME_SYSTEM = "com.google.android.apps.chrome";
-    private static final String CHROME_BETA = "com.android.chrome.beta";
     /**
      * The M supported browsers.
      */
     @VisibleForTesting
-    protected Set<String> mPreferredBrowsers = new LinkedHashSet<>();
+    protected Set<String> mPreferredBrowsersCustomTabs = new LinkedHashSet<>();
 
     /**
      * The M auth started.
@@ -85,6 +81,10 @@ public class OktaAuthenticationActivity extends Activity {
     protected CustomTabOptions mCustomTabOptions;
     private boolean mResultSent = false;
     private int mMatchFlag;
+
+    public OktaAuthenticationActivity() {
+        mPreferredBrowsersCustomTabs.addAll(Arrays.asList("chrome", "firefox"));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,15 +115,15 @@ public class OktaAuthenticationActivity extends Activity {
             }
             String[] list = bundle.getStringArray(EXTRA_BROWSERS);
             if (list != null) {
-                mPreferredBrowsers.addAll(Arrays.asList(list));
+                mPreferredBrowsersCustomTabs.addAll(Arrays.asList(list));
             }
         }
-        mPreferredBrowsers.addAll(Arrays.asList(CHROME_STABLE, CHROME_SYSTEM, CHROME_BETA));
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+
         outState.putBoolean(EXTRA_AUTH_STARTED, mAuthStarted);
         outState.putParcelable(EXTRA_AUTH_URI, mAuthUri);
         outState.putParcelable(EXTRA_TAB_OPTIONS, mCustomTabOptions);
@@ -140,6 +140,7 @@ public class OktaAuthenticationActivity extends Activity {
 
             try {
                 mAuthStarted = true;
+
                 createCustomTabsIntent(browser).launchUrl(this, mAuthUri);
             } catch (Exception e) {
                 mAuthStarted = false;
@@ -148,8 +149,6 @@ public class OktaAuthenticationActivity extends Activity {
                         EXTRA_EXCEPTION,
                         AuthorizationException.GeneralErrors.NO_BROWSER_FOUND.toJsonString()
                 ));
-
-                throw e;
             }
         }
     }
@@ -172,23 +171,29 @@ public class OktaAuthenticationActivity extends Activity {
     @VisibleForTesting
     protected String getBrowser() {
         PackageManager pm = getPackageManager();
-        Intent serviceIntent = new Intent();
-        serviceIntent.setAction(CustomTabsService.ACTION_CUSTOM_TABS_CONNECTION);
+        Intent serviceIntent = new Intent().setAction(CustomTabsService.ACTION_CUSTOM_TABS_CONNECTION);
         List<ResolveInfo> resolveInfoList = pm.queryIntentServices(serviceIntent, mMatchFlag);
+
         List<String> customTabsBrowsersPackages = new ArrayList<>();
+
         for (ResolveInfo info : resolveInfoList) {
-            customTabsBrowsersPackages.add(info.serviceInfo.packageName);
+            if (info.serviceInfo.enabled) {
+                customTabsBrowsersPackages.add(info.serviceInfo.packageName);
+            }
         }
+
         // Return Preferred Browser
-        for (String browser : mPreferredBrowsers) {
+        for (String browser : mPreferredBrowsersCustomTabs) {
             if (customTabsBrowsersPackages.contains(browser)) {
                 return browser;
             }
         }
+
         //Use first compatible browser on list.
         if (!customTabsBrowsersPackages.isEmpty()) {
             return customTabsBrowsersPackages.get(0);
         }
+
         return null;
     }
 
@@ -222,6 +227,8 @@ public class OktaAuthenticationActivity extends Activity {
             }
         }
         CustomTabsIntent tabsIntent = intentBuilder.build();
+
+        tabsIntent.intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
         if (packageBrowser != null) {
             tabsIntent.intent.setPackage(packageBrowser);
