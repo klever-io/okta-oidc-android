@@ -31,9 +31,9 @@ import java.util.concurrent.Executor;
 
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 public class WebAuthClientFactory implements ClientFactory<WebAuthClient> {
-    private Executor mCallbackExecutor;
-    private CustomTabOptions mCustomTabOptions;
-    private String[] mSupportedBrowser;
+    private final Executor mCallbackExecutor;
+    private final CustomTabOptions mCustomTabOptions;
+    private final String[] mSupportedBrowser;
 
     public WebAuthClientFactory(@Nullable Executor callbackExecutor,
                                 CustomTabOptions customTabOptions,

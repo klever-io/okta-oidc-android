@@ -81,10 +81,10 @@ import static com.okta.oidc.util.AuthorizationException.TYPE_OAUTH_REGISTRATION_
 class SyncWebAuthClientImpl extends AuthAPI implements SyncWebAuthClient {
     private static final String TAG = SyncWebAuthClientImpl.class.getSimpleName();
 
-    private String[] mSupportedBrowsers;
-    private CustomTabOptions mCustomTabOptions;
-    private SyncSessionClient mSessionClient;
-    private AuthenticationResultHandler mHandler;
+    private final String[] mSupportedBrowsers;
+    private final CustomTabOptions mCustomTabOptions;
+    private final SyncSessionClient mSessionClient;
+    private final AuthenticationResultHandler mHandler;
 
     SyncWebAuthClientImpl(OIDCConfig oidcConfig,
                           Context context,

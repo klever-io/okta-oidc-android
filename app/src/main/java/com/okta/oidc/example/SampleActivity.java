@@ -443,7 +443,7 @@ public class SampleActivity extends AppCompatActivity implements SignInDialog.Si
 
         mSessionOAuth2Client = mWebOAuth2.getSessionClient();
 
-        Okta.WebAuthBuilder builder = new Okta.WebAuthBuilder()
+        mWebAuth = new Okta.WebAuthBuilder()
                 .withConfig(mOidcConfig)
                 .withContext(getApplicationContext())
                 .withStorage(mStorageOidc)
@@ -452,9 +452,7 @@ public class SampleActivity extends AppCompatActivity implements SignInDialog.Si
                 .setRequireHardwareBackedKeyStore(!isEmulator())
                 .withTabColor(0)
                 .withOktaHttpClient(factory.build())
-                .supportedBrowsers(FIRE_FOX);
-
-        mWebAuth = builder.create();
+                .create();
 
         mSessionClient = mWebAuth.getSessionClient();
 
