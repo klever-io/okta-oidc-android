@@ -182,10 +182,11 @@ public class OktaAuthenticationActivity extends Activity {
             }
         }
 
-        // Return Preferred Browser
         for (String browser : mPreferredBrowsersCustomTabs) {
-            if (customTabsBrowsersPackages.contains(browser)) {
-                return browser;
+            for (String browserPackage : customTabsBrowsersPackages) {
+                if (browserPackage.contains(browser)) {
+                    return browserPackage;
+                }
             }
         }
 
