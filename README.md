@@ -54,10 +54,12 @@ It is recommended that your app extends [FragmentActivity][fragment-activity] or
 
 ### Installation
 
+**Note:** If you're updating from 1.0.18 or earlier, we changed the maven coordinates, and where it's hosted. See the [CHANGELOG](/CHANGELOG.md/#1019) for more information.
+
 Add the `Okta OIDC` dependency to your `build.gradle` file:
 
 ```gradle
-implementation 'com.okta.android:okta-oidc-android:1.0.19'
+implementation 'com.okta.android:okta-oidc-android:1.0.20'
 ```
 
 The SDK requires Java 8 support.
@@ -369,7 +371,7 @@ dependencies {
     ...
     ...
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.10'
-    implementation 'com.okta.android:okta-oidc-android:1.0.19'
+    implementation 'com.okta.android:okta-oidc-android:1.0.20'
     implementation 'com.okta.authn.sdk:okta-authn-sdk-api:2.0.0'
     implementation('com.okta.authn.sdk:okta-authn-sdk-impl:2.0.0') {
         exclude group: 'com.okta.sdk', module: 'okta-sdk-httpclient'
