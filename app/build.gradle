@@ -4,7 +4,7 @@ apply from: "${rootDir}/gradle/okta-common.gradle"
 
 android {
     defaultConfig {
-        minSdkVersion 23
+        minSdkVersion 24
         compileSdkVersion 30
         targetSdkVersion 30
         applicationId "com.okta.oidc.example"
@@ -17,17 +17,16 @@ android {
             properties.load(project.rootProject.file('local.properties').newDataInputStream())
         }
         Boolean travis = System.getenv("TRAVIS") == "true"
-        String manifestScheme = properties.getProperty('test.scheme', '""')
         buildConfigField "String", "USERNAME_MFA", travis ? '""' : properties.getProperty('mfa.username', '""')
         buildConfigField "String", "PASSWORD_MFA", travis ? '""' : properties.getProperty('mfa.password', '""')
         buildConfigField "String", "USERNAME", travis ? '""' : properties.getProperty('test.username', '""')
         buildConfigField "String", "PASSWORD", travis ? '""' : properties.getProperty('test.password', '""')
         buildConfigField "String", "PINCODE", travis ? '""' : properties.getProperty('test.pincode', '""')
-        buildConfigField "String", "CLIENT_ID", travis ? '""' : properties.getProperty('test.clientId', '""')
-        buildConfigField "String", "REDIRECT_URI", travis ? '""' : properties.getProperty('test.redirectUri', '""')
-        buildConfigField "String", "END_SESSION_URI", travis ? '""' : properties.getProperty('test.endSessionUri', '""')
-        buildConfigField "String[]", "SCOPES", travis ? "{}" : ("{" + properties.getProperty('test.scopes', '""') + "}")
-        buildConfigField "String", "DISCOVERY_URI", travis ? '""' : properties.getProperty('test.discoveryUri', '""')
+        buildConfigField "String", "CLIENT_ID", travis ? '""' : properties.getProperty('test.clientId', '"0oa148vvgteTRZDr15d7"')
+        buildConfigField "String", "REDIRECT_URI", travis ? '""' : properties.getProperty('test.redirectUri', '"com.okta.oidc.example:/redirectLogin"')
+        buildConfigField "String", "END_SESSION_URI", travis ? '""' : properties.getProperty('test.endSessionUri', '"com.okta.oidc.example:/logout"')
+        buildConfigField "String[]", "SCOPES", travis ? "{}" : ("{" + properties.getProperty('test.scopes', '"openid", "profile", "offline_access", "email"') + "}")
+        buildConfigField "String", "DISCOVERY_URI", travis ? '""' : properties.getProperty('test.discoveryUri', '"https://dev-5618690.okta.com"')
         buildConfigField "String[]", "IDP_SCOPE", travis ? "{}" : ("{" + properties.getProperty('test.idp_scope', '""') + "}")
         buildConfigField "String", "IDP", travis ? '""' : properties.getProperty('test.idp', '""')
         buildConfigField "String", "IDP_USERNAME", travis ? '""' : properties.getProperty('test.idp_username', '""')
@@ -36,7 +35,7 @@ android {
         // Make sure this is consistent with the redirect URI used in
         // res/raw/okta_oidc_config
         manifestPlaceholders = [
-                "appAuthRedirectScheme": manifestScheme
+                "appAuthRedirectScheme": "com.okta.oidc.example"
         ]
     }
 
@@ -56,26 +55,26 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:' + rootProject.appcompatVersion
     implementation 'androidx.security:security-crypto:' + rootProject.securityVersion
 
-    implementation "com.google.android.material:material:1.3.0"
+    implementation "com.google.android.material:material:1.4.0"
     implementation 'androidx.biometric:biometric:1.1.0'
     implementation 'com.okta.authn.sdk:okta-authn-sdk-api:2.0.2'
     implementation('com.okta.authn.sdk:okta-authn-sdk-impl:2.0.2') {
         exclude group: 'com.okta.sdk', module: 'okta-sdk-httpclient'
     }
-    implementation 'com.okta.sdk:okta-sdk-okhttp:2.0.1'
+    implementation 'com.okta.sdk:okta-sdk-okhttp:4.0.0'
     implementation "com.squareup.okhttp3:okhttp:${rootProject.okhttpVersion}"
     androidTestImplementation "androidx.browser:browser:${rootProject.browserVersion}"
     // Core library
-    androidTestImplementation 'androidx.test:core:1.3.0'
+    androidTestImplementation 'androidx.test:core:1.4.0'
 
     // Assertions
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
-    androidTestImplementation 'androidx.test.ext:truth:1.3.0'
-    androidTestImplementation 'com.google.truth:truth:1.1'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.ext:truth:1.4.0'
+    androidTestImplementation 'com.google.truth:truth:1.1.3'
 
     // AndroidJUnitRunner and JUnit Rules
-    androidTestImplementation 'androidx.test:runner:1.3.0'
-    androidTestImplementation 'androidx.test:rules:1.3.0'
+    androidTestImplementation 'androidx.test:runner:1.4.0'
+    androidTestImplementation 'androidx.test:rules:1.4.0'
     // Espresso dependencies
     androidTestImplementation 'androidx.test.espresso:espresso-core:' + rootProject.espressoVersion
     androidTestImplementation 'androidx.test.espresso:espresso-contrib:' + rootProject.espressoVersion
