@@ -1,3 +1,22 @@
+# 1.2.1
+
+### Bug Fix
+- [#288](https://github.com/okta/okta-oidc-android/pull/288) Fix for ActivityNotFoundException.
+
+# 1.2.0
+
+### Feature
+- [#281](https://github.com/okta/okta-oidc-android/pull/281) Add ability to customize ID Token validation.
+
+# 1.1.0
+
+### Feature
+- [#276](https://github.com/okta/okta-oidc-android/pull/276) Adds support for parallel refresh token requests.
+- [#277](https://github.com/okta/okta-oidc-android/pull/277) Run SessionClient requests in serial.
+
+### Bug Fix
+- [#272](https://github.com/okta/okta-oidc-android/pull/272) Make `OktaAuthenticationActivity` `launchMode` `singleTop` which fixes an issue where the browser tab would remain in the Android recents list.
+
 # 1.0.20
 
 ### Bug Fix
